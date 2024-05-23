@@ -1,0 +1,112 @@
+<link rel="stylesheet" href="/css/new_add.css">
+      
+        <form action="/form_submit" method="post" class="Form">
+            <h2 class="new-admission">New Admission</h2>
+                <div class="form_container">
+                  <div class="form_div">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" name="date"class="rectangle-2">
+                  </div>
+                  <div class="form_div">
+                    <label for="std">Student Name</label>
+                    <input type="text" name="s_name" id="std" class="rectangle-6" placeholder="&nbsp;&nbsp;&nbsp;Enter student name" required>
+                  </div>
+                  <div class="form_div">
+                  <div class="flex-row-c">
+                        <div class="search-container">
+                          <label for="searchInput">Course</label>
+                          <input type="text" id="searchInput" placeholder="&nbsp;&nbsp;&nbsp;Search..." class="rectangle-3" name="cname" required>
+                          <select id="mySelect" class="rectangle-4" onchange="updateFees(this.value)" required>
+                            <option value="default" selected disabled >Choose a course...</option>
+                            <% if (fitchdata && fitchdata.length > 0) { %>
+                              <% for(var i=0; i < fitchdata.length; i++) { %>
+                                <option value="<%= fitchdata[i].key %>"><%= fitchdata[i].title %></option>
+                              <% } %>
+                            <% } else { %>
+                              <option>No data available</option>
+                            <% } %>
+                          </select>
+                      <div id="selectedValue">
+                          <!-- Display selected value here -->
+                      </div>
+                      </div>
+                  </div>
+                
+                  </div>
+                  <div class="form_div">
+                    <label for="feeses">Fees</label>
+                    <input type="number" id="fees" name="fees" class="rectangle-6" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Fees" readonly>
+                  </div>
+                  <div class="form_div form_div_span">
+                    <button type="submit" class="rectangle-9">Save & Generate</button>
+                  </div>
+                </div>
+        </form>
+        
+       <% if(typeof uid  !='undefined' && typeof s_name !='undefined' ){%>
+        <div id="popup" class="popup">
+            <!-- Popup content -->
+            <div class="popup-content">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <h1>Admission Confirmed</h1>
+              <p>UID: <%= uid %> </p>
+              <p>Name: <%= s_name %> </p>
+              <h2>&#127881;</h2>
+            </div>
+        </div>
+        <%}%>
+        <script> 
+          document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const mySelect = document.getElementById('mySelect');
+            const feesInput = document.getElementById('fees');
+            const updateDate = document.getElementById('date');
+            let originalOptions = Array.from(mySelect.options).map(option => ({ text: option.text, value: option.value }));
+            const currentDate = new Date();
+            const formattedDate = currentDate.toISOString().split('T')[0];
+            updateDate.value = formattedDate;
+    
+            function filterOptions(searchValue) {
+                mySelect.innerHTML = '';
+                let filteredOptions = originalOptions.filter(option => option.text.toLowerCase().includes(searchValue.toLowerCase()));
+                
+                filteredOptions.forEach(option => {
+                    let newOption = new Option(option.text, option.value);
+                    mySelect.add(newOption);
+                });
+    
+                if (filteredOptions.length === 1) {
+                    searchInput.value = filteredOptions[0].text;
+                    updateFees(filteredOptions[0].value); // Update fees when only one option is available
+                }
+            }
+    
+            function updateFees(optionValue) {
+                <% fitchdata.forEach((item) => { %>
+                    if ('<%= item.key %>' === optionValue) {
+                        console.log('<%= item.fees %>');
+                        feesInput.value = '<%= item.fees %>'; // Set fees value to the input
+                    }
+                <% }) %>
+            }
+    
+            searchInput.addEventListener('input', function() {
+                filterOptions(searchInput.value);
+            });
+    
+            mySelect.addEventListener('change', function() {
+                searchInput.value = mySelect.options[mySelect.selectedIndex].text;
+                updateFees(mySelect.value);
+            });
+    
+            filterOptions(''); // Initialize the select with all options
+        });
+    
+        // Function to close the popup
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+        
+        
+          </script>
+            

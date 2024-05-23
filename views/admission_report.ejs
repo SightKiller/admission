@@ -1,0 +1,30 @@
+
+<link rel="stylesheet" href="/css/ad_report.css">
+<div class="main">
+    <h2 class="count">Total Number of Admission: <%= count %></h2>
+     <!-- <a href="/exc"><button>Print</button></a> -->
+    <div class="search_option">
+        <% if (typeof options !== 'undefined' && options.length > 0) { %>        
+            <form action="/report_date" method="post">
+                <div class="date_search">
+                    <h2>Date selection</h2> 
+                    <input type="date" name="date" id="date" required>
+                    <button type="submit">Search</button>
+                </div>
+            </form>
+            <form action="/report_dept" method="post">    
+                <div class="dept_search">
+                        <h2>Course Selection</h2>
+                        <select name="dept" required>
+                            <option value="default" selected disabled >Choose a course...</option>
+                            <% options.forEach(function(option) { %>
+                                <option value="<%= option.title %>"><%= option.title %></option>
+                            <% }); %>
+                        </select>
+                    <button type="submit">search</button>
+                </div>
+            </form>
+            <% } %>    
+    </div>
+</div>
+
